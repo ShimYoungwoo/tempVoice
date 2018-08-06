@@ -26,9 +26,11 @@
 
         <activity android:name=".SpeechActivity" />
 
+        <activity android:name=".VoiceRecoActivity" />
+
         <meta-data
             android:name="com.kakao.sdk.AppKey"
-            android:value="3e190b89f313006e9832fc8e510502e" />
+            android:value="ba5514a13a4471915d241ac1b4fbe31e" />
 
 
     </application>

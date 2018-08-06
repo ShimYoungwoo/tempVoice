@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.kakao.sdk.newtoneapi.SpeechRecognizeListener;
+import com.kakao.sdk.newtoneapi.SpeechRecognizerActivity;
 import com.kakao.sdk.newtoneapi.SpeechRecognizerClient;
 import com.kakao.sdk.newtoneapi.SpeechRecognizerManager;
 import com.kakao.sdk.newtoneapi.impl.util.PermissionUtils;
@@ -56,6 +57,7 @@ public class SpeechActivity extends Activity implements View.OnClickListener, Sp
         findViewById(R.id.cancelbutton).setOnClickListener(this);
         findViewById(R.id.restartbutton).setOnClickListener(this);
         findViewById(R.id.stopbutton).setOnClickListener(this);
+        findViewById(R.id.uibutton).setOnClickListener(this);
         setButtonsStatus(true);
     }
 
@@ -85,6 +87,7 @@ public class SpeechActivity extends Activity implements View.OnClickListener, Sp
 
     private void setButtonsStatus(boolean enabled) {
         findViewById(R.id.speechbutton).setEnabled(enabled);
+        findViewById(R.id.uibutton).setEnabled(enabled);
         findViewById(R.id.restartbutton).setEnabled(!enabled);
         findViewById(R.id.cancelbutton).setEnabled(!enabled);
         findViewById(R.id.stopbutton).setEnabled(!enabled);
@@ -103,13 +106,14 @@ public class SpeechActivity extends Activity implements View.OnClickListener, Sp
                 SpeechRecognizerClient.Builder builder = new SpeechRecognizerClient.Builder().
                         setServiceType(serviceType);
 
+                /*
                 if (serviceType.equals(SpeechRecognizerClient.SERVICE_TYPE_WORD)) {
                     EditText words = (EditText)findViewById(R.id.words_edit);
                     String wordList = words.getText().toString();
                     builder.setUserDictionary(wordList);
 
                     Log.i("SpeechSampleActivity", "word list : " + wordList.replace('\n', ','));
-                }
+                }*/
 
                 client = builder.build();
 
@@ -138,6 +142,69 @@ public class SpeechActivity extends Activity implements View.OnClickListener, Sp
         else if (id == R.id.stopbutton) {
             if (client != null) {
                 client.stopRecording();
+            }
+        }
+        else if (id == R.id.uibutton) {
+            Intent i = new Intent(getApplicationContext(), VoiceRecoActivity.class);
+
+            /*
+            if (serviceType.equals(SpeechRecognizerClient.SERVICE_TYPE_WORD)) {
+                EditText words = (EditText)findViewById(R.id.words_edit);
+                String wordList = words.getText().toString();
+
+                Log.i("SpeechSampleActivity", "word list : " + wordList.replace('\n', ','));
+
+                i.putExtra(SpeechRecognizerActivity.EXTRA_KEY_USER_DICTIONARY, wordList);
+            }
+            */
+
+            i.putExtra(SpeechRecognizerActivity.EXTRA_KEY_SERVICE_TYPE, serviceType);
+
+            startActivityForResult(i, 0);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            ArrayList<String> results = data.getStringArrayListExtra(VoiceRecoActivity.EXTRA_KEY_RESULT_ARRAY);
+
+            final StringBuilder builder = new StringBuilder();
+
+            for (String result : results) {
+                builder.append(result);
+                builder.append("\n");
+            }
+
+            new AlertDialog.Builder(this).
+                    setMessage(builder.toString()).
+                    setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }).
+                    show();
+        }
+        else if (requestCode == RESULT_CANCELED) {
+            // 음성인식의 오류 등이 아니라 activity의 취소가 발생했을 때.
+            if (data == null) {
+                return;
+            }
+
+            int errorCode = data.getIntExtra(VoiceRecoActivity.EXTRA_KEY_ERROR_CODE, -1);
+            String errorMsg = data.getStringExtra(VoiceRecoActivity.EXTRA_KEY_ERROR_MESSAGE);
+
+            if (errorCode != -1 && !TextUtils.isEmpty(errorMsg)) {
+                new AlertDialog.Builder(this).
+                        setMessage(errorMsg).
+                        setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).
+                        show();
             }
         }
     }
