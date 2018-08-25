@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.example.s0woo.tempvoice"
+        applicationId 'com.example.s0woo.tempvoice'
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
@@ -16,15 +16,20 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+    }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:28.+'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation 'com.kakao.sdk:newtone:6.0.1'
-
+    implementation 'com.amazonaws:aws-android-sdk-core:2.2.+'
+    implementation 'com.amazonaws:aws-android-sdk-s3:2.2.+'
+    implementation 'com.amazonaws:aws-android-sdk-ddb:2.2.+'
+    implementation 'com.amazonaws:aws-android-sdk-cognito:2.6.+'
 }

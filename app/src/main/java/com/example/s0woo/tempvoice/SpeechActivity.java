@@ -7,13 +7,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 
 import com.kakao.sdk.newtoneapi.SpeechRecognizeListener;
 import com.kakao.sdk.newtoneapi.SpeechRecognizerActivity;
@@ -58,6 +56,8 @@ public class SpeechActivity extends Activity implements View.OnClickListener, Sp
         findViewById(R.id.restartbutton).setOnClickListener(this);
         findViewById(R.id.stopbutton).setOnClickListener(this);
         findViewById(R.id.uibutton).setOnClickListener(this);
+        findViewById(R.id.connectbutton).setOnClickListener(this);
+        findViewById(R.id.storagebutton).setOnClickListener(this);
         setButtonsStatus(true);
     }
 
@@ -87,7 +87,8 @@ public class SpeechActivity extends Activity implements View.OnClickListener, Sp
 
     private void setButtonsStatus(boolean enabled) {
         findViewById(R.id.speechbutton).setEnabled(enabled);
-        findViewById(R.id.uibutton).setEnabled(enabled);
+        findViewById(R.id.connectbutton).setEnabled(enabled);
+        findViewById(R.id.storagebutton).setEnabled(enabled);
         findViewById(R.id.restartbutton).setEnabled(!enabled);
         findViewById(R.id.cancelbutton).setEnabled(!enabled);
         findViewById(R.id.stopbutton).setEnabled(!enabled);
@@ -160,6 +161,14 @@ public class SpeechActivity extends Activity implements View.OnClickListener, Sp
 
             i.putExtra(SpeechRecognizerActivity.EXTRA_KEY_SERVICE_TYPE, serviceType);
 
+            startActivityForResult(i, 0);
+        }
+        else if (id == R.id.connectbutton) {
+            Intent i = new Intent(getApplicationContext(), MakeConnActivity.class);
+            startActivityForResult(i, 0);
+        }
+        else if (id == R.id.storagebutton) {
+            Intent i = new Intent(getApplicationContext(), S3UploadActivity.class);
             startActivityForResult(i, 0);
         }
     }
