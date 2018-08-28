@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.kakao.sdk.newtoneapi.SpeechRecognizeListener;
 import com.kakao.sdk.newtoneapi.SpeechRecognizerActivity;
@@ -20,11 +21,13 @@ import com.kakao.sdk.newtoneapi.SpeechRecognizerManager;
 import com.kakao.sdk.newtoneapi.impl.util.PermissionUtils;
 
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 /**
  * Created by s0woo on 2018-07-15.
+ * Edited by s0woo on 2018-08-28.
  */
 
 public class SpeechActivity extends Activity implements View.OnClickListener, SpeechRecognizeListener{
@@ -160,7 +163,6 @@ public class SpeechActivity extends Activity implements View.OnClickListener, Sp
             */
 
             i.putExtra(SpeechRecognizerActivity.EXTRA_KEY_SERVICE_TYPE, serviceType);
-
             startActivityForResult(i, 0);
         }
         else if (id == R.id.connectbutton) {
@@ -180,20 +182,29 @@ public class SpeechActivity extends Activity implements View.OnClickListener, Sp
 
             final StringBuilder builder = new StringBuilder();
 
+            /* 결과 다 보여주는 코드
             for (String result : results) {
                 builder.append(result);
                 builder.append("\n");
             }
+            */
 
+            //제일 가능성있는 값 하나만 가지고 오기
+            builder.append(results.get(0));
+            makeAlertDialog(builder.toString());
+
+            /*
             new AlertDialog.Builder(this).
                     setMessage(builder.toString()).
                     setPositiveButton("확인", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
+
                         }
                     }).
                     show();
+                    */
         }
         else if (requestCode == RESULT_CANCELED) {
             // 음성인식의 오류 등이 아니라 activity의 취소가 발생했을 때.
@@ -215,6 +226,42 @@ public class SpeechActivity extends Activity implements View.OnClickListener, Sp
                         }).
                         show();
             }
+        }
+    }
+
+    public void makeAlertDialog(final String result) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("음성인식 결과");
+        builder.setMessage(result);
+
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                detachString(result);
+            }
+        });
+
+        builder.setNegativeButton("다시하기", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                String serviceType = SpeechRecognizerClient.SERVICE_TYPE_WEB;
+                Intent intent = new Intent(getApplicationContext(), VoiceRecoActivity.class);
+                intent.putExtra(SpeechRecognizerActivity.EXTRA_KEY_SERVICE_TYPE, serviceType);
+                startActivityForResult(intent, 0);
+            }
+        });
+
+        builder.show();
+    }
+
+    public void detachString(String result) {
+        if(result.length()>7) {
+            String from = result.substring(0,2);
+            String to = result.substring(5,7);
+            //System.out.println("*************************************시작: "+ from + "도착" + to);
+            Toast.makeText(getApplicationContext(),"시작: "+ from + " 도착: " + to, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -251,6 +298,7 @@ public class SpeechActivity extends Activity implements View.OnClickListener, Sp
 
     }
 
+    //버튼사용하는 결과창
     @Override
     public void onResults(Bundle results) {
         final StringBuilder builder = new StringBuilder();
@@ -265,6 +313,7 @@ public class SpeechActivity extends Activity implements View.OnClickListener, Sp
             builder.append(confs.get(i).intValue());
             builder.append(")\n");
         }
+
 
         final Activity activity = this;
         runOnUiThread(new Runnable() {
@@ -299,4 +348,5 @@ public class SpeechActivity extends Activity implements View.OnClickListener, Sp
     public void onFinished() {
         Log.i("SpeechSampleActivity", "onFinished");
     }
+
 }
