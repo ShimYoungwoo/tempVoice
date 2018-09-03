@@ -39,6 +39,8 @@
 
         <activity android:name=".S3UploadActivity" />
 
+        <activity android:name=".S3DownloadActivity" />
+
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="ba5514a13a4471915d241ac1b4fbe31e" />

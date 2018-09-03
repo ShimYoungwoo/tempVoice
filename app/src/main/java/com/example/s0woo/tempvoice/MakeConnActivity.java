@@ -9,8 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.kakao.network.NetworkTask;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -50,7 +48,7 @@ public class MakeConnActivity extends AppCompatActivity {
             public void onClick(View view) {
                 userID = ed_userId.getText().toString();
                 secretaryID = ed_secretaryID.getText().toString();
-                secretaryUUID = "12334"; //UUID 받아오는 코드로 수정해야함
+                secretaryUUID = "1234"; //UUID 받아오는 코드로 수정해야함
 
                 String url = "http://13.209.64.57:8080/dbSave.jsp";
 
