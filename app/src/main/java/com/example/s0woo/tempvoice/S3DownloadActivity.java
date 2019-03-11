@@ -30,7 +30,7 @@ public class S3DownloadActivity extends AppCompatActivity {
 
         CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
                 getApplicationContext(),
-                "ap-northeast-2:29422a03-b373-4e0a-85e7-4c1a9a28d16d", // 자격 증명 풀 ID
+                "", // 자격 증명 풀 ID
                 Regions.AP_NORTHEAST_2 // 리전
         );
 
